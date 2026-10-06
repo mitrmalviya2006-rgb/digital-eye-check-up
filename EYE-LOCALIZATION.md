@@ -1,0 +1,25 @@
+# Component 4: eye detection and localization
+
+Component 4 reuses Component 2's active preview and Component 3's still-running MediaPipe Face Landmarker worker. It does not request camera permission, create another stream, load a second vision model, capture a still image, upload results, or persist results. A second explicit checkbox is required before eye-specific extraction begins. Withdrawing that assent unsubscribes eye analysis and stops the shared detector; retry does not request camera permission again.
+
+## Model-backed information
+
+The pinned `@mediapipe/tasks-vision@1.0.1` runtime exposes `FaceLandmarker.FACE_LANDMARKS_LEFT_EYE`, `FACE_LANDMARKS_RIGHT_EYE`, and the corresponding iris connection graphs. The worker sends those runtime definitions to the page. Component 4 builds contour/iris point sets from those connections instead of assuming a second model's index layout. The result API returns normalized face landmarks, optional blendshapes, and an optional transform matrix; it does not return per-eye confidence fields. See the [Face Landmarker API](https://developers.google.com/edge/api/mediapipe/js/tasks-vision.facelandmarker), [result interface](https://developers.google.com/edge/api/mediapipe/js/tasks-vision.facelandmarkerresult), and [official web connection definitions](https://github.com/google-ai-edge/mediapipe/blob/master/mediapipe/tasks/web/vision/face_landmarker/face_landmarks_connections.ts).
+
+`FACE_LANDMARKS_LEFT_EYE` and `RIGHT_EYE` refer to the model's anatomical face-side convention, not the preview's screen-left/right. The app uses anatomical `left` / `OS` and `right` / `OD` identifiers. The model input and output remain unmirrored. Only preview drawing flips x when a mirrored preview is configured.
+
+The model exposes eye-contour and iris-boundary landmarks. The eye center and bounds come from actual eye-contour points; eyelid arcs are derived from the eye connection graph and openness is estimated as normalized eyelid gap divided by eye-corner distance. The nasal/temporal label on each corner is a geometric estimate based on proximity to the face horizontal midpoint (the runtime topology does not separately name those corners). Thresholds, smoothing, and tracking windows are in `POSITIONING_CONFIG.eyeTracking`. The iris boundary is model-provided; its center is explicitly an estimate (mean of boundary points). This pipeline does not detect a separate pupil, and reports pupil coordinates as unavailable. The task does not expose per-eye landmark confidence, visibility, or occlusion scores, so confidence is `null` and visibility is `UNAVAILABLE`; eye points are reported as `DETECTED` with a separate `geometryState`. This implementation never asserts full `VALID` status; geometric completeness does not certify image quality, lack of occlusion, or suitability for screening.
+
+## Coordinates and tracking
+
+The output schema is `1.0.0`, with normalized top-left-origin coordinates in the unmirrored camera frame, source `frameWidth`/`frameHeight`, and pixel coordinates derived from that exact resolution. `mapVideoPoint` and `mapVideoBounds` apply actual video dimensions, CSS container size, `object-fit: contain|cover`, and preview mirroring. Camera rotation is reflected in the current frame's intrinsic width and height; orientation changes therefore do not reuse prior pixel dimensions.
+
+Component 3 continues at its rate-limited 5 Hz worker cadence. Component 4 only derives eye geometry while Component 3 has a fresh `READY` result. Eye landmarks are exponentially smoothed (alpha 0.48). Stability needs eight valid two-eye samples spanning at least 1.2 seconds inside configured center/scale jitter ranges. A single missed frame is marked `TEMPORARY_LOSS`; it has no current box/center and cannot be used as valid coordinates. Longer loss resets the stability history and smoothing.
+
+## Output and debug
+
+Each `eye-localization-update` event carries a machine-readable result with left/right side, OD/OS, bounds, center, contour/corners/eyelid arcs, iris boundary and estimated center, pupil-unavailable state, openness state, orientation estimate, geometry state, and tracking status. Because confidence and occlusion cannot be assessed, `bothEyesValid` remains false; complete geometry is exposed separately as `bothEyesGeometryValid`. The `eye-localization-stable` event carries the stable geometry plus latest-result, camera, positioning, and shared-detector accessors for downstream quality and capture components. Stable geometry is not image-quality clearance or automatic-capture authorization.
+
+The landmark/iris overlay and JSON view are disabled by default and only enable on localhost when opened with `?debugEyes=1`. The display is in memory only and never logs or stores biometric data. The overlay maps source coordinates through the same `object-fit` and mirror transform as the video.
+
+The geometry has mocked tests only. Openness thresholds, eye visibility under glasses/occlusion, device-specific detection quality, and clinical accuracy have not been validated; a later image-quality stage must reject uncertain or obscured images.

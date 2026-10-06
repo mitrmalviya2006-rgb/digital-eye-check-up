@@ -1,0 +1,40 @@
+/** Tunable image-space thresholds; distance is face-box diagonal / frame diagonal, never centimeters. */
+export const POSITIONING_CONFIG = Object.freeze({
+  faceSizeTooFar: 0.19,
+  faceSizeTooClose: 0.52,
+  centerToleranceX: 0.09,
+  eyeLevel: 0.43,
+  eyeLevelTolerance: 0.075,
+  maxYawDegrees: 18,
+  maxPitchDegrees: 18,
+  maxRollDegrees: 14,
+  maxGazeOffset: 0.23,
+  smoothingAlpha: 0.38,
+  instructionConfirmFrames: 2,
+  stabilityWindow: 10,
+  stableDurationMs: 1800,
+  stableCenterRange: 0.028,
+  stableFaceSizeRange: 0.035,
+  stablePoseRangeDegrees: 7,
+  stableGazeRange: 0.10,
+  processIntervalMs: 200,
+  maxInferenceMs: 6000,
+  maxResultAgeMs: 3000,
+  eyeTracking: Object.freeze({
+    smoothingAlpha: 0.48,
+    trackingWindow: 8,
+    stableDurationMs: 1200,
+    stableCenterRange: 0.016,
+    stableScaleRange: 0.025,
+    temporaryLossFrames: 1,
+    resetAfterLossMs: 900,
+    closedOpennessRatio: 0.08,
+    openOpennessRatio: 0.19,
+  }),
+});
+
+export const FACE_LANDMARKER_ASSETS = Object.freeze({
+  version: '1.0.1',
+  packageBase: 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1',
+  model: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+});

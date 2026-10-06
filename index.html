@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Pre-screening questionnaire for vision screening." />
+    <title>Vision screening | Getting started</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <noscript><p class="notice urgent">JavaScript is required to complete the questionnaire.</p></noscript>
+      <section class="card" aria-labelledby="page-title">
+        <p class="eyebrow">Vision screening</p>
+        <aside class="notice urgent" aria-label="Prototype limitation"><strong>Prototype — screening is unavailable</strong><p>A trained local prediction model has not been configured. This site cannot currently produce an eye-screening result or refractive-error estimate. Do not use it to make health decisions.</p></aside>
+        <h1 id="page-title">Before you begin</h1>
+        <p class="intro">Answer a few questions so we can check whether routine vision screening is appropriate today.</p>
+        <ol class="progress" aria-label="Screening progress"><li aria-current="step"><span>1</span> Questionnaire &amp; consent</li><li><span>2</span> Camera setup</li><li><span>3</span> Guided positioning</li><li><span>4</span> Eye localization</li><li><span>5</span> Image quality</li><li><span>6</span> Automatic capture</li><li><span>7</span> Image preprocessing</li><li><span>8</span> Feature extraction</li><li><span>9</span> AI prediction</li><li><span>10</span> Left/right analysis</li><li><span>11</span> Confidence &amp; validity</li><li><span>12</span> Screening result</li><li><span>13</span> Retest &amp; consistency</li><li><span>14</span> Result history</li></ol>
+        <div id="app" aria-live="polite"></div>
+      </section>
+      <footer class="site-footer"><a href="./privacy.html">Privacy and data handling</a><span>Vision screening prototype · Not a medical diagnosis</span></footer>
+    </main>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

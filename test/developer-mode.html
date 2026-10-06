@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Developer Test Mode | Vision Screening</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <main class="page-shell developer-shell">
+      <section class="card" aria-labelledby="developer-title">
+        <p class="eyebrow">Local developer mode</p>
+        <h1 id="developer-title">Component 19 — End-to-end tests</h1>
+        <p class="intro">Runs the existing project tests and checks the real application boundary. Developer mode is served only when explicitly enabled on the local development server; it is not linked from the screening flow.</p>
+        <aside class="notice developer-warning"><strong>Test data and medical safety</strong><p>Questionnaire values in the app journey are temporary test inputs with history saving off. No prescription values, predictions, or eye images are created. The camera check uses your actual browser camera only after you press the button and approve permission. This tool does not diagnose or establish clinical suitability.</p><p id="developer-security" class="hint" role="status">Verifying this is a local developer session…</p></aside>
+        <section aria-labelledby="run-tests-title">
+          <h2 id="run-tests-title">Automated component tests</h2>
+          <div class="actions developer-actions">
+            <button id="run-all" class="primary" type="button">Run all tests</button>
+            <label for="component-select">Component</label>
+            <select id="component-select" aria-label="Select a component test suite"></select>
+            <button id="run-one" class="secondary" type="button">Run selected component</button>
+            <button id="rerun-failed" class="secondary" type="button" disabled>Re-run failed files</button>
+            <button id="clear-run" class="secondary" type="button">Clear developer test session</button>
+            <button id="export-json" class="secondary" type="button" disabled>Export JSON report</button>
+            <button id="export-markdown" class="secondary" type="button" disabled>Export readable report</button>
+          </div>
+          <p id="test-run-status" class="positioning-status" role="status" aria-live="polite">No automated run has been performed yet.</p>
+          <dl id="run-metadata" class="history-metadata" hidden></dl>
+          <div class="developer-table-wrap">
+            <table class="developer-table">
+              <caption>Component status: automated contract tests are distinct from physical-device and model verification.</caption>
+              <thead><tr><th scope="col">Component</th><th scope="col">Status</th><th scope="col">Automated</th><th scope="col">Duration</th><th scope="col">Dependencies / limitation</th><th scope="col">Action</th></tr></thead>
+              <tbody id="component-results"><tr><td colspan="6">Run a test suite to populate component results.</td></tr></tbody>
+            </table>
+          </div>
+          <details><summary>Test errors and raw failure details</summary><pre id="test-errors" class="developer-output">No errors have been reported.</pre></details>
+        </section>
+        <section aria-labelledby="journey-title">
+          <h2 id="journey-title">Real application journey attempt</h2>
+          <p>This loads the existing website in an isolated, same-origin frame, completes Component 1 with non-sensitive test answers, then follows the actual Component 17 preflight. It does not request camera permission or generate a prescription. The complete prediction/result journey is marked not testable if the real local model is absent.</p>
+          <div class="actions"><button id="run-journey" class="primary" type="button">Attempt app journey</button><button id="clear-journey" class="secondary" type="button">Clear journey state</button></div>
+          <p id="journey-status" class="positioning-status" role="status" aria-live="polite">Not run.</p>
+          <dl id="pipeline-state" class="history-metadata" hidden></dl>
+          <iframe id="application-frame" title="Isolated real vision-screening application test session" sandbox="allow-scripts allow-same-origin" hidden></iframe>
+        </section>
+        <section aria-labelledby="hardware-title">
+          <h2 id="hardware-title">Real browser and camera check</h2>
+          <p>Uses Component 17 capability detection and Component 2’s real CameraController. It requests camera access only after an explicit click. It tests the current browser/device and reports actual stream settings; lack of torch or a rear camera is a limitation, not fabricated support.</p>
+          <div class="actions"><button id="run-camera" class="secondary" type="button">Test actual camera</button><button id="stop-camera" class="secondary" type="button" disabled>Stop camera</button></div>
+          <video id="hardware-preview" autoplay muted playsinline aria-label="Developer camera test live preview"></video>
+          <p id="hardware-status" class="positioning-status" role="status" aria-live="polite">Camera not tested. Camera permission has not been requested.</p>
+          <dl id="hardware-details" class="history-metadata" hidden></dl>
+        </section>
+        <section aria-labelledby="manual-title">
+          <h2 id="manual-title">Manual checks requiring real user/device</h2>
+          <ol>
+            <li>Use a supported HTTPS or localhost browser and grant camera permission when prompted.</li>
+            <li>Confirm the active camera is rear-facing if your device exposes one; verify any camera fallback is clearly reported.</li>
+            <li>Check torch only if the camera reports support. Do not infer flash support from the device model.</li>
+            <li>Follow the real screening flow to check positioning, both-eye detection, image quality, and auto-capture. Eye/face model artifacts must actually load.</li>
+            <li>Do not use generated test reports as clinical evidence. With no configured trained refractive-error model, Component 9 and downstream prediction/result stages cannot pass end-to-end validation.</li>
+          </ol>
+          <p id="report-summary" class="hint">A report is available after a test, browser journey, or camera check.</p>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="../src/developer-mode.js"></script>
+  </body>
+</html>

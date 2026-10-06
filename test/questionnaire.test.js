@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { validateQuestionnaire } from '../src/validation.js';
+import { createResult } from '../src/model.js';
+import { canStartCameraStep, setQuestionnaireResult } from '../src/session.js';
+import { configureSessionDataStore } from '../src/session.js';
+const valid = () => ({ age:'25', previousPrescription:'no', right:{sph:'',cyl:'',axis:''}, left:{sph:'',cyl:'',axis:''}, wearsCorrection:'no', lastExam:'within-year', blurredVision:'no', suddenVisionChange:'no', painfulSymptoms:'no', seriousEyeInjury:'no', pendingEyeSurgeryFollowup:'no', eyeConditionHistory:'no', steadyGaze:'no', historyDescription:'', requiredConsent:true });
+test('valid questionnaire creates a next-step result through the Component 16 session store', () => { let value=null; configureSessionDataStore({ getSessionValue: key => key === 'questionnaireResult' ? value : null, setSessionValue: (key,next) => { if(key==='questionnaireResult') value=next; } }); const a=valid(), v=validateQuestionnaire(a); assert.deepEqual(v.errors,{}); const r=createResult(a,v.safety,'s'); setQuestionnaireResult(r); assert.equal(r.age,25); assert.equal(canStartCameraStep(),true); });
+test('age is required and invalid ages are rejected', () => { let a=valid(); a.age=''; assert.ok(validateQuestionnaire(a).errors.age); a.age='two'; assert.ok(validateQuestionnaire(a).errors.age); a.age='121'; assert.ok(validateQuestionnaire(a).errors.age); });
+test('prescription validation is conditional and axis is constrained', () => { let a=valid(); a.previousPrescription='yes'; a.right.axis='190'; assert.ok(validateQuestionnaire(a).errors['right.axis']); a.previousPrescription='no'; assert.equal(validateQuestionnaire(a).errors['right.axis'],undefined); });
+test('invalid prescription numbers are rejected', () => { const a=valid(); a.previousPrescription='yes'; a.left.sph='a'; assert.ok(validateQuestionnaire(a).errors['left.sph']); });
+test('required consent is never defaulted and blocks submission', () => { const a=valid(); a.requiredConsent=false; assert.ok(validateQuestionnaire(a).errors.requiredConsent); });
+test('urgent symptoms stop routine workflow', () => { const a=valid(); a.suddenVisionChange='yes'; const v=validateQuestionnaire(a); assert.equal(v.safety.status,'STOP_AND_SEEK_CARE'); assert.equal(createResult(a,v.safety,'s').workflowAllowed,false); });
+test('result only includes provided prescription values', () => { const a=valid(); a.previousPrescription='yes'; a.right.sph='-1.25'; const r=createResult(a,validateQuestionnaire(a).safety,'s'); assert.deepEqual(r.previousPrescription.right,{sph:-1.25}); });

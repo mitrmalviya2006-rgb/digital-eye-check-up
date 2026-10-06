@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="How the Virtual Eye Checkup prototype handles questionnaire, camera, and local history data." />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Privacy and data handling | Virtual Eye Checkup</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <article class="card" aria-labelledby="privacy-title">
+        <p class="eyebrow">Virtual Eye Checkup</p>
+        <h1 id="privacy-title">Privacy and data handling</h1>
+        <p>This is a software prototype for vision screening and refractive-error estimation. It is not a medical diagnosis or a substitute for a professional eye examination. A trained prediction model is not configured, so this prototype cannot currently produce a screening result.</p>
+
+        <h2>Information in this browser</h2>
+        <p>Questionnaire answers and the active screening session are held in this browser tab and are cleared when you reset or leave the session. If you opt in to result history, the application stores supported result records and your consent choice in browser-local IndexedDB. History is not synchronized to a cloud service. You can review or delete saved history using the application's history and data controls.</p>
+
+        <h2>Camera and image processing</h2>
+        <p>Camera access is requested only after you choose to start it. The application processes the preview locally and does not intentionally upload or persist camera frames or eye photographs. Stopping or leaving a camera step releases the active media stream.</p>
+
+        <h2>Third-party positioning files</h2>
+        <p>If positioning is started after its separate consent, the browser downloads the MediaPipe runtime from jsDelivr and a face-landmark model file from Google Cloud. The application discloses that the MediaPipe service may send usage and performance metrics to Google. Those services may receive ordinary network request information such as IP address and browser metadata. This prototype does not send eye images as part of those file downloads.</p>
+
+        <h2>Exports and professional care</h2>
+        <p>PDF reports and history exports are generated locally when supported. Any file you choose to download, print, or share leaves the browser's private storage according to your own action. Seek professional or urgent medical evaluation for concerning symptoms; do not use this prototype to diagnose or rule out an eye condition.</p>
+
+        <p class="hint">This notice describes the current prototype behavior; it is not a legal compliance certification or a substitute for jurisdiction-specific privacy advice.</p>
+        <p><a href="./">Return to Virtual Eye Checkup</a></p>
+      </article>
+    </main>
+  </body>
+</html>
